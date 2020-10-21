@@ -5,7 +5,7 @@ const player = require("./../controller/playerController");
 
 router.post("/create", player.createPlayer);
 router.put("/edit/:id", player.updatePlayer);
-router.get("/players", player.getAllPlayer);
-router.get("/player/:id", player.getSelectedPlayer);
+router.get("/get", player.getAllPlayer);
+router.get("/get/:id", player.getSelectedPlayer);
 
 module.exports = router;
