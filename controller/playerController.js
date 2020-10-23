@@ -1,4 +1,3 @@
-const debug = require("debug")("app:controller");
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const { Player, validatePlayer } = require("../models/playerModel");

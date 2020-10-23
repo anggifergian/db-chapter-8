@@ -28,5 +28,9 @@ db.once("open", () => debugMongoose(`Connected to database...`));
 // Main route
 app.use("/api/v1", require("./router/index"));
 
+app.use(function (err, req, res, next) {
+    res.status(500).send("Something failed.");
+});
+
 // Port listening
 app.listen(PORT, () => debugStartup(`Listening on port ${PORT}...`));
