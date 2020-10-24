@@ -1,5 +1,5 @@
-const debug = require("debug")("app:controller");
 const _ = require("lodash");
+const mongoose = require("mongoose");
 const { Player, validatePlayer } = require("../models/playerModel");
 
 module.exports.createPlayer = async (req, res) => {
@@ -26,31 +26,52 @@ module.exports.getSelectedPlayer = async (req, res) => {
     const _id = req.params.id;
     if (!_id) return res.status(400).send(`Id required`);
 
+    if (!mongoose.Types.ObjectId.isValid(_id))
+        return res.status(400).send(`Invalid player id.`);
+
     const player = await Player.findById(_id);
     if (!player) return res.status(400).send("Invalid player id.");
     res.send(player);
 };
 
 module.exports.updatePlayer = async (req, res) => {
+    // Check id in params should be included
     const _id = req.params.id;
     if (!_id) return res.status(400).send(`Id required`);
 
+    // Check is the given id has mongoose id data type
+    if (!mongoose.Types.ObjectId.isValid(_id))
+        return res.status(400).send(`Invalid player id.`);
+
+    // Check is there player with the given id
     let player = await Player.findById(_id);
     if (!player) return res.status(400).send("Invalid player id.");
 
-    if (player.email === req.body.email && player.username === req.body.username) {
+    const { email, username, experience, level } = req.body;
+
+    // Check request body changes
+    if (
+        player.email === email &&
+        player.username === username &&
+        player.level === level &&
+        player.experience === experience
+    ) {
         return res.send(`No data was changed.`);
     }
 
-    if (req.body.email !== player.email) {
-        player = await Player.findOne({ email: req.body.email });
-        debug("Ga ada email");
+    // Check request email changes and unique
+    if (email !== player.email) {
+        player = await Player.findOne({ email: email });
         if (player) return res.status(400).send(`Email has been registered.`);
     }
 
-    player = await Player.findOne({ username: req.body.username });
-    if (player) return res.status(400).send(`Username has been registered.`);
+    // Check request username changes and unique
+    if (username !== player.username) {
+        player = await Player.findOne({ username: username });
+        if (player) return res.status(400).send(`Username has been registered.`);
+    }
 
+    // Main update function
     player = await Player.findByIdAndUpdate(
         _id,
         _.pick(req.body, ["username", "email", "experience", "level"]),
