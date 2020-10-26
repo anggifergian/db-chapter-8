@@ -1,3 +1,4 @@
 {
-    "jwtSecretKey":"JWT_KEY"
+    "jwtSecretKey":"JWT_KEY",
+    "db":"mongodb"
 }
