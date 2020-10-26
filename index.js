@@ -8,6 +8,7 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const config = require("config");
 
 // Setup middleware
 app.use(cors());
@@ -20,10 +21,10 @@ mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose.set("useUnifiedTopology", true);
-mongoose.connect("mongodb://localhost/chapter-8");
+mongoose.connect(config.get("db"));
 const db = mongoose.connection;
 db.on("error", debugMongoose.bind(console, "connection error"));
-db.once("open", () => debugMongoose(`Connected to database...`));
+db.once("open", () => console.log(`Connected to database...`));
 
 // Main route
 app.use("/api/v1", require("./router/index"));
